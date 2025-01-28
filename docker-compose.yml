@@ -1,0 +1,82 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  api-gateway:
+    build: 
+      context: ./api-gateway
+    ports:
+      - "8080:8080"
+    networks:
+      - auth-network
+    depends_on:
+      - auth-service-1
+      - auth-service-2
+    environment:
+      - NODE_ENV=development
+
+  auth-service-1:
+    build:
+      context: ./auth-service-1
+    environment:
+      - BLOCKCHAIN_TYPE=hyperledger
+      - NODE_ENV=development
+    networks:
+      - auth-network
+    volumes:
+      - blockchain1-data:/data
+
+  auth-service-2:
+    build:
+      context: ./auth-service-2
+    environment:
+      - BLOCKCHAIN_TYPE=ethereum
+      - NODE_ENV=development
+      - ETH_NETWORK=http://ganache:8545
+      - CONTRACT_ADDRESS=${CONTRACT_ADDRESS}
+      - PRIVATE_KEY=${PRIVATE_KEY}
+    networks:
+      - auth-network
+    volumes:
+      - blockchain2-data:/data
+    depends_on:
+      - ganache
+
+  ganache:
+    image: trufflesuite/ganache:latest
+    ports:
+      - "8545:8545"
+    networks:
+      - auth-network
+    volumes:
+      - ganache-data:/data
+
+  monitoring:
+    build:
+      context: ./monitoring
+    ports:
+      - "9090:9090"
+    networks:
+      - auth-network
+    depends_on:
+      - auth-service-1
+      - auth-service-2
+
+  analytics:
+    build:
+      context: ./analytics
+    volumes:
+      - ./results:/app/results
+    networks:
+      - auth-network
+    depends_on:
+      - monitoring
+
+networks:
+  auth-network:
+    driver: bridge
+
+volumes:
+  blockchain1-data:
+  blockchain2-data:
+  ganache-data:

@@ -1,0 +1,11 @@
+{
+    "name": "auth-service-1",
+    "version": "1.0.0",
+    "main": "src/index.js",
+    "dependencies": {
+      "express": "4.18.2",
+      "fabric-network": "2.2.19",
+      "fabric-ca-client": "2.2.19",
+      "winston": "3.11.0"
+    }
+  }

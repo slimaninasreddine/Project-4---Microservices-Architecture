@@ -1,0 +1,11 @@
+{
+    "name": "auth-service-2",
+    "version": "1.0.0",
+    "main": "src/index.js",
+    "dependencies": {
+      "express": "4.18.2",
+      "web3": "1.10.0",
+      "winston": "3.11.0",
+      "ethereumjs-tx": "2.1.2"
+    }
+  }
